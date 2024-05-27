@@ -106,8 +106,10 @@ class Snake(GameObject):
             self.next_direction = None
 
     def move(self):
-        """Обновляем позицию змейки.
-        Управление её движением по игровому полю."""
+        """
+        Обновляем позицию змейки.
+        Управление её движением по игровому полю.
+        """
         head_x, head_y = self.get_head_position()
         xd, yd = self.direction
         x_new = (GRID_SIZE * xd + head_x) % SCREEN_WIDTH
