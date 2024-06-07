@@ -169,7 +169,8 @@ def main():
         handle_keys(snake)
         snake.move()
 
-        if (snake.get_head_position() in snake.positions[2:]) or snake.length == 768:
+        if ((snake.get_head_position() in snake.positions[2:])
+                or snake.length == 768):
             snake.reset()
             apple.randomize_position(snake.positions)
             apple.draw()
