@@ -49,12 +49,18 @@ class GameObject:
                  position=CENTER_SCREEN):
         self.position = position
         self.body_color = bg_color
+        self.last = None
 
     def draw_cell(self, position):
         """Создание ячейки."""
         rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+    def remove_cell(self):
+        """Метод remove_cell подтирание последнего сигмента."""
+        last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
     def draw(self):
         """Отрисовка объекта. По умолчанию pass."""
@@ -67,13 +73,13 @@ class Apple(GameObject):
     def __init__(self, bg_color=APPLE_COLOR):
         """Инициализация яблока."""
         super().__init__(bg_color)
-        self.randomize_position(CENTER_SCREEN)
+        self.randomize_position([CENTER_SCREEN])
 
     def randomize_position(self, danger_zone):
         """Реализация рандомного появления яблока."""
         x_pos = randint(0, GRID_WIDTH - 1) * GRID_SIZE
         y_pos = randint(0, GRID_HEIGHT - 1) * GRID_SIZE
-        self.position = x_pos, y_pos
+        self.position = (x_pos, y_pos)
         while self.position in danger_zone:
             self.randomize_position(danger_zone)
 
@@ -96,7 +102,6 @@ class Snake(GameObject):
         self.positions = [self.position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.next_direction = None
-        self.last = None
         screen.fill(BOARD_BACKGROUND_COLOR)
 
     def update_direction(self):
@@ -131,11 +136,6 @@ class Snake(GameObject):
         if self.last:
             self.remove_cell()
 
-    def remove_cell(self):
-        """Метод remove_cell подтирание последнего сигмента."""
-        last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
-        pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
-
 
 def handle_keys(game_object):
     """Функция обработки действий пользователя."""
@@ -169,7 +169,7 @@ def main():
         handle_keys(snake)
         snake.move()
 
-        if snake.get_head_position() in snake.positions[2:]:
+        if (snake.get_head_position() in snake.positions[2:]) or snake.length == 768:
             snake.reset()
             apple.randomize_position(snake.positions)
             apple.draw()
