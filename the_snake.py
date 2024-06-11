@@ -49,7 +49,6 @@ class GameObject:
                  position=CENTER_SCREEN):
         self.position = position
         self.body_color = bg_color
-        self.last = None
 
     def draw_cell(self, position):
         """Создание ячейки."""
@@ -57,9 +56,9 @@ class GameObject:
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
-    def remove_cell(self):
+    def remove_cell(self, position):
         """Метод remove_cell подтирание последнего сигмента."""
-        last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
+        last_rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
     def draw(self):
@@ -102,6 +101,7 @@ class Snake(GameObject):
         self.positions = [self.position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.next_direction = None
+        self.last = None
         screen.fill(BOARD_BACKGROUND_COLOR)
 
     def update_direction(self):
@@ -122,9 +122,8 @@ class Snake(GameObject):
 
         self.positions.insert(0, (x_new, y_new))
         if len(self.positions) > self.length:
-            self.last = self.positions.pop()
-        else:
-            self.last = None
+            last = self.positions.pop()
+            self.remove_cell(last)
 
     def get_head_position(self):
         """Возвращает позицию головы змейки."""
@@ -132,9 +131,8 @@ class Snake(GameObject):
 
     def draw(self):
         """Метод draw класса Snake,отрисовка головы."""
-        self.draw_cell(self.get_head_position())
-        if self.last:
-            self.remove_cell()
+        for position in self.positions:
+            self.draw_cell(position)
 
 
 def handle_keys(game_object):
@@ -169,8 +167,8 @@ def main():
         handle_keys(snake)
         snake.move()
 
-        if ((snake.get_head_position() in snake.positions[2:])
-                or snake.length == 768):
+        if (snake.get_head_position() in snake.positions[2:])\
+                or snake.length == (GRID_WIDTH * GRID_HEIGHT):
             snake.reset()
             apple.randomize_position(snake.positions)
             apple.draw()
