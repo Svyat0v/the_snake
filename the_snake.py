@@ -169,8 +169,8 @@ def main():
         handle_keys(snake)
         snake.move()
 
-        if (snake.get_head_position() in snake.positions[2:] or
-                snake.length == (GRID_WIDTH * GRID_HEIGHT)):
+        if (snake.get_head_position() in snake.positions[2:]
+                or snake.length == (GRID_WIDTH * GRID_HEIGHT)):
             snake.reset()
             apple.randomize_position(snake.positions)
             apple.draw()
