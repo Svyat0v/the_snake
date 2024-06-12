@@ -122,8 +122,9 @@ class Snake(GameObject):
 
         self.positions.insert(0, (x_new, y_new))
         if len(self.positions) > self.length:
-            last = self.positions.pop()
-            self.remove_cell(last)
+            self.last = self.positions.pop()
+        else:
+            self.last = None
 
     def get_head_position(self):
         """Возвращает позицию головы змейки."""
@@ -131,8 +132,9 @@ class Snake(GameObject):
 
     def draw(self):
         """Метод draw класса Snake,отрисовка головы."""
-        for position in self.positions:
-            self.draw_cell(position)
+        self.draw_cell(self.get_head_position())
+        if self.last:
+            self.remove_cell(self.last)
 
 
 def handle_keys(game_object):
@@ -167,8 +169,8 @@ def main():
         handle_keys(snake)
         snake.move()
 
-        if (snake.get_head_position() in snake.positions[2:])\
-                or snake.length == (GRID_WIDTH * GRID_HEIGHT):
+        if (snake.get_head_position() in snake.positions[2:] or
+                snake.length == (GRID_WIDTH * GRID_HEIGHT)):
             snake.reset()
             apple.randomize_position(snake.positions)
             apple.draw()
